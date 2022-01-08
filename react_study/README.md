@@ -188,3 +188,290 @@ JSX에서는 class가 아닌 className으로 설정
 ```
 
 이용
+
+# 3장 컴포넌트
+
+## 3.1 클래스형 컴포넌트
+
+클래스형 컴포넌트의 경우 state 기능 및 라이프 사이클 기능을 사용할 수 있고 임의 메서드를 정의 가능
+
+클래스형 컴포넌트는 render 함수가 꼭 있어야 하고, 그 안에서 보여 주어야 할 JSX를 반환해야 함
+
+함수 컴포넌트의 주요 단점은 state와 라이프사이클 API 사용이 불가능했지만, Hooks라는 기능이 도입되면서 해결됨
+
+## 3.2 첫 컴포넌트 생성
+
+### 3.2.3 src 디렉터리에 MyComponent.js 파일 생성
+
+### 3.2.3 모듈 내보내기 및 불러오기
+
+#### 3.2.3.1 모듈 내보내기(export)
+
+```HTML
+export default MuComponent;
+```
+
+#### 3.2.3.2 모듈 불러오기(import)
+
+```HTML
+import MuComponent from './MyComponent';
+```
+
+## 3.3 props
+
+props는 컴포넌트 속성을 설정할 때 사용하는 요소
+
+props 값은 해당 컴포넌트를 불러와 사용하는 부모 컴포넌트에서 설정 가능
+
+### 3.3.1 JSX 내부에서 props 렌더링
+
+{ } 기호로 감싸 주면 됨
+
+### 3.3.2 컴포넌트를 사용할 때 props 값 지정하기
+
+부모 컴포넌트에서 설정
+
+```HTML
+<MyComponent name="react" />
+```
+
+### 3.3.3 props 기본값 설정 : defaultProps
+
+defaultProps : props 값을 따로 지정하지 않았을 때 보여 줄 기본값을 설정
+
+### 3.3.4 태그 사이의 내용을 보여 주는 children
+
+children : 컴포넌트 태그 사이의 내용을 보여줌
+
+### 3.3.5 비구조화 할당 문법을 통해 props 내부 값 추출하기
+
+비구조화 할당 문법을 사용하여 내부 값을 추출 가능
+
+```HTML
+const { name, children } = props;
+안녕하세요. 제 이름은 {name}입니다.
+children 값은 {children}입니다.
+```
+
+### 3.3.6 propTypes를 통한 props 검증
+
+defulatProp 설정과 비슷
+
+import 구문을 사용하여 불러와서 사용
+
+#### 3.3.6.1 isRequired를 사용하여 필수 propTypes 설정
+
+propTypes를 지정하지 않았을 때 경고 메시지를 띄워 주는 작업 -> propTypes를 지정할 때 뒤에 isRequired를 붙여 주면 됨
+
+#### 3.3.6.2 더 많은 PropTypes 종류
+
+- array : 배열
+
+- arrayOf : 특정 PropType으로 이루어진 배열
+
+- bool : true 혹은 false 값
+
+- func : 함수
+
+- number : 숫자
+
+- object : 객체
+
+- string : 문자열
+
+- symbol : ES6의 Symbol
+
+- node : 렌더링할 수 있는 모든 것
+
+- instanceOf(클래스) : 특정 클래스의 인스턴스
+
+- oneOf : 주어진 배열 요소 중 값 하나
+
+- oneOfType : 주어진 배열 안의 종류 중 하나
+
+- objectOf : 객체의 모든 키 값이 인자로 주어진 PropType인 객체
+
+- shape : 주어진 스키마를 가진 객체
+
+- any : 아무 종류
+
+### 3.3.7 클래스형 컴포넌트에서 props 사용하기
+
+클래스형 컴포넌트에서 props를 사용할 때는 render 함수에서 this.props를 조회
+
+클래스형 컴포넌트에서 defaultProps와 propTypes를 설정할 때 class 내부에서 지정하는 방법도 있음
+
+## 3.4 state
+
+state는 컴포넌트 내부에서 바뀔 수 있는 값
+
+props는 컴포넌트가 사용되는 과정에서 부모 컴포넌트가 설정하는 값이며, 컴포넌트 자신은 해당 props를 읽기 전용으로만 사용 가능
+
+state의 종류 : 클래스형 컴포넌트가 지니고 있는 state, 함수 컴포넌트에서 useState 함수를 통해 사용하는 state
+
+### 3.4.1 클래스형 컴포넌트의 state
+
+constructor 메서드를 작성하여 설정 
+
+- 반드시 super(props) 호출
+
+- 현재 클래스형 컴포넌트가 상속받고 있는 리액트의 Component 클래스가 지닌 생성자 함수 호출
+
+- this.state 값에 초깃값 설정
+
+- 컴포넌트의 state는 객체 형식
+
+```HTML
+constructor(props) {
+    super(props);
+    this.state = {
+        number = 0
+    };
+}
+```
+
+render() 함수
+
+- 현재 state를 조회할 대는 this.state 조회
+
+- 이벤트로 설정할 함수를 넣어 줄 때는 화살표 함수 문법을 사용하여 넣어 줘야 함
+
+```HTML
+render() {
+    const { number } = this.state;
+    return (
+        <div>
+            <h1>{number}</h1>
+            <button
+                onClick={() => {
+                    this.setState({ number: number + 1 });
+                }}
+            >
+                +1
+            </button>
+        </div>
+    );
+}
+```
+
+해당 컴포넌트를 불러와 렌더링
+
+```HTML
+import Counter from './Counter';
+
+const App = () => {
+    return <Counter />;
+}
+
+export default App;
+```
+
+#### 3.4.1.1 state 객체 안에 여러 값이 있을 때
+
+state 객체 안에 여러 값이 존재 가능
+
+this.setState 함수는 인자로 전달된 객체 안에 들어 있는 값만 바꿔줌
+
+#### 3.4.1.2 state를 constructor에서 꺼내기
+
+constructor 메서드를 선언하지 않고도 state 초깃값 설정 가능
+
+```HTML
+state = {
+    number: 0,
+    fixedNumber: 0
+};
+```
+
+#### 3.4.1.3 this.setState에 객체 대신 함수 인자 전달하기
+
+this.setState를 사용하여 state 값을 업데이트 할 때는 상태가 비동기적으로 업데이트
+
+이전 값을 저장할 수 있음
+
+```HTML
+this.setState(prevState => {
+    return {
+        number: prevState.number + 1
+    };
+});
+```
+
+#### 3.4.1.4 this.setState가 끝난 후 특정 작업 실행하기
+
+setState를 사용하여 값을 업데이트하고 난 다음에 특정 작업을 하고 싶을 때는 setState의 두 번째 파라미터로 콜백 함수를 등록하여 작업을 처리 가능
+
+```HTML
+<button
+        onClick={() => {
+            this.setState(
+                {
+                    number: number + 1
+                },
+                () => {
+                    console.log('방금 setState가 호출되었습니다.');
+                    console.log(this.state);
+                }
+            );
+        }}
+    >
+    +1
+</button>
+```
+
+### 3.4.2 함수 컴포넌트에서 useState 사용하기]
+
+useState라는 함수를 사용하여 함수 컴포넌트에서 state사용 가능
+
+Hooks를 사용
+
+#### 3.4.2.1 배열 비구조화 할당
+
+배열 안에 들어 있는 값을 쉽게 추출할 수 있도록 해주는 문법
+
+```HTML
+const array = [1, 2];
+const one = array[0];
+const two = array[1];
+```
+
+와
+
+```HTML
+const array = [1, 2];
+const [one, two] = [array];
+```
+
+동일
+
+#### 3.4.2.2 useState 사용하기
+
+클래스형 컴포넌트에서의 state 초깃값은 객체 형태로 넣어줘야 하지만, useState에서는 반드시 객체가 아니어도 됨
+
+함수를 호출하면 배열이 반환
+
+배열의 첫 번째 원소는 현재 상태, 두 번째 원소는 상태를 바꾸어 주는 함수 (세터 함수)
+
+```HTML
+const Say = () => {
+    const [message, setMessage] = useState('');
+    const onClickEnter = () => setMessage('안녕하세요!');
+    const onClickLeave = () => setMessage('안녕히 가세요!');
+
+    return (
+        <div>
+            <button onclick={onClickEnter}>입장</button>
+            <button onclick={onClickLeave}>퇴장</button>
+            <h1>{message}</h1>
+        </div>
+    );
+};
+```
+
+#### 3.4.2.3 한 컴포넌트에서 useState 여러 번 사용하기
+
+useState는 한 컴포넌트에서 여러 번 사용 가능
+
+## 3.5 state를 사용할 때 주의 사항
+
+state 값을 바꾸어야 할 때는 setState 혹은 useState를 통해 전달받은 세터 함수를 사용해야 함
