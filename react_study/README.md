@@ -104,13 +104,11 @@ function App() {
 
 이렇게 작성된 코드는 다음과 같이 변환
 
-<pre>
-<code>
+```HTML
 function App() {
   return React.createElement("div", null, "Hello", React.createElement("b", null, "react"));
 }
-</code>
-</pre>
+```
 
 JSX를 사용하면 매우 편하게 UI를 렌더링 가능
 
@@ -126,7 +124,7 @@ JSX를 사용하면 매우 편하게 UI를 렌더링 가능
 
 컴포넌트에 여러 요소가 있다면 반드시 부모 요소 하나로 감싸야 함 -> Virtual DOM에서 컴포넌트 변화를 감지해 낼 때 효율적으로 비교할 수 있도록 컴포넌트 내부는 하나의 DOM 트리 구조로 이루어져야 함
 
-<div>나 <Fragment>, <> 로 감싸면 됨
+```HTML<div>```나 ```HTML<Fragment>```, <> 로 감싸면 됨
 
 ## 2.5 ESLint와 Prettier 적용하기
 
