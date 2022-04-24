@@ -262,113 +262,286 @@ export default App;
 
 ## 3.1 클래스형 컴포넌트
 
-클래스형 컴포넌트의 경우 state 기능 및 라이프 사이클 기능을 사용할 수 있고 임의 메서드를 정의 가능
+- 컴포넌트를 선언하는 방식은 두 가지
+  - 함수 컴포넌트
+  - 클래스형 컴포넌트
+- 클래스형 컴포넌트의 경우 state 기능 및 라이프 사이클 기능을 사용할 수 있고 임의 메서드를 정의 가능
 
-클래스형 컴포넌트는 render 함수가 꼭 있어야 하고, 그 안에서 보여 주어야 할 JSX를 반환해야 함
+```
+import { Component } from "react";
 
-함수 컴포넌트의 주요 단점은 state와 라이프사이클 API 사용이 불가능했지만, Hooks라는 기능이 도입되면서 해결됨
+class App extends Component {
+  render() {
+    const name = "react";
+    return <div className="react">{name}</div>;
+  }
+}
+
+export default App;
+```
+
+- 클래스형 컴포넌트는 render 함수가 꼭 있어야 하고, 그 안에서 보여 주어야 할 JSX를 반환해야 함
+- 함수 컴포넌트
+  - 장점 : 선언 쉬움, 메모리 자원 덜 사용, 결과물의 파일 크기가 더 작음
+  - 단점 : state와 라이프사이클 API 사용이 불가능했지만, Hooks라는 기능이 도입되면서 해결됨
 
 ## 3.2 첫 컴포넌트 생성
 
 ### 3.2.3 src 디렉터리에 MyComponent.js 파일 생성
 
+```
+const MyComponent = () => {
+  return <div>나의 새롭고 멋진 컴포넌트</div>;
+};
+```
+
 ### 3.2.3 모듈 내보내기 및 불러오기
 
 #### 3.2.3.1 모듈 내보내기(export)
 
-```HTML
+```
 export default MuComponent;
 ```
 
 #### 3.2.3.2 모듈 불러오기(import)
 
-```HTML
-import MuComponent from './MyComponent';
+```
+import MyComponent from "./MyComponent";
+
+const App = () => {
+  return <MyComponent />;
+};
+
+export default App;
 ```
 
 ## 3.3 props
 
-props는 컴포넌트 속성을 설정할 때 사용하는 요소
-
-props 값은 해당 컴포넌트를 불러와 사용하는 부모 컴포넌트에서 설정 가능
+- props는 컴포넌트 속성을 설정할 때 사용하는 요소
+- props 값은 해당 컴포넌트를 불러와 사용하는 부모 컴포넌트에서 설정 가능
 
 ### 3.3.1 JSX 내부에서 props 렌더링
 
-{ } 기호로 감싸 주면 됨
+```
+const MyComponent = props => {
+    return <div>안녕하세요. 제 이름은 {props.name}</div>;
+};
+
+export default MyComponent;
+```
 
 ### 3.3.2 컴포넌트를 사용할 때 props 값 지정하기
 
 부모 컴포넌트에서 설정
 
-```HTML
+```
 <MyComponent name="react" />
 ```
 
 ### 3.3.3 props 기본값 설정 : defaultProps
 
-defaultProps : props 값을 따로 지정하지 않았을 때 보여 줄 기본값을 설정
+defaultProps : props 값을 따로 지정하지 않았을 때 보여 줄 기본값을 설정\
+
+```
+# MyComponent.js
+
+MyComponent.defaultProps = {
+  name: "기본 이름",
+};
+```
 
 ### 3.3.4 태그 사이의 내용을 보여 주는 children
 
 children : 컴포넌트 태그 사이의 내용을 보여줌
 
+```
+# App.js
+
+import MyComponent from "./MyComponent";
+
+const App = () => {
+  return <MyComponent>children 내용</MyComponent>;
+};
+
+export default App;
+```
+
+```
+# MyComponent.js
+
+const MyComponent = (props) => {
+  return (
+    <div>
+      안녕하세요. 제 이름은 {props.name}
+      <br />
+      children 값은 {props.children}입니다.
+    </div>
+  );
+};
+
+MyComponent.defaultProps = {
+  name: "기본 이름",
+};
+
+export default MyComponent;
+
+```
+
 ### 3.3.5 비구조화 할당 문법을 통해 props 내부 값 추출하기
 
-비구조화 할당 문법을 사용하여 내부 값을 추출 가능
+- 비구조화 할당 문법을 사용하여 내부 값을 추출 가능
 
-```HTML
-const { name, children } = props;
-안녕하세요. 제 이름은 {name}입니다.
-children 값은 {children}입니다.
+```
+# App.js
+
+import MyComponent from "./MyComponent";
+
+const App = () => {
+  return <MyComponent>children 내용</MyComponent>;
+};
+
+export default App;
+```
+
+```
+# MyComponent.js
+
+const MyComponent = (props) => {
+  const { name, children } = props;
+  return (
+    <div>
+      안녕하세요. 제 이름은 {name}입니다. children 값은 {children}입니다.
+    </div>
+  );
+};
+
+MyComponent.defaultProps = {
+  name: "기본 이름",
+};
+
+export default MyComponent;
+
+```
+
+- 함수의 파라미터가 객체라면 그 값을 바로 비구조화해서 사용 가능
+
+```
+# App.js
+
+import MyComponent from "./MyComponent";
+
+const App = () => {
+  return <MyComponent>children 내용</MyComponent>;
+};
+
+export default App;
+```
+
+```
+# MyComponent.js
+
+const MyComponent = ({ name, children }) => {
+  return (
+    <div>
+      안녕하세요. 제 이름은 {name}입니다. children 값은 {children}입니다.
+    </div>
+  );
+};
+
+MyComponent.defaultProps = {
+  name: "기본 이름",
+};
+
+export default MyComponent;
+
 ```
 
 ### 3.3.6 propTypes를 통한 props 검증
 
-defulatProp 설정과 비슷
+- import 구문을 사용하여 불러와서 사용
 
-import 구문을 사용하여 불러와서 사용
+```
+import PropTypes from "prop-types";
+```
+
+```
+MyComponent.prototype = {
+  name: PropTypes.string,
+};
+```
 
 #### 3.3.6.1 isRequired를 사용하여 필수 propTypes 설정
 
-propTypes를 지정하지 않았을 때 경고 메시지를 띄워 주는 작업 -> propTypes를 지정할 때 뒤에 isRequired를 붙여 주면 됨
+- propTypes를 지정하지 않았을 때 경고 메시지를 띄워 주는 작업 -> propTypes를 지정할 때 뒤에 isRequired를 붙여 주면 됨
+
+```
+MyComponent.prototype = {
+  name: PropTypes.string.isRequired,
+};
+```
 
 #### 3.3.6.2 더 많은 PropTypes 종류
 
 - array : 배열
-
 - arrayOf : 특정 PropType으로 이루어진 배열
-
 - bool : true 혹은 false 값
-
 - func : 함수
-
 - number : 숫자
-
 - object : 객체
-
 - string : 문자열
-
 - symbol : ES6의 Symbol
-
 - node : 렌더링할 수 있는 모든 것
-
 - instanceOf(클래스) : 특정 클래스의 인스턴스
-
 - oneOf : 주어진 배열 요소 중 값 하나
-
 - oneOfType : 주어진 배열 안의 종류 중 하나
-
 - objectOf : 객체의 모든 키 값이 인자로 주어진 PropType인 객체
-
 - shape : 주어진 스키마를 가진 객체
-
 - any : 아무 종류
 
 ### 3.3.7 클래스형 컴포넌트에서 props 사용하기
 
-클래스형 컴포넌트에서 props를 사용할 때는 render 함수에서 this.props를 조회
+- 클래스형 컴포넌트에서 props를 사용할 때는 render 함수에서 this.props를 조회
 
-클래스형 컴포넌트에서 defaultProps와 propTypes를 설정할 때 class 내부에서 지정하는 방법도 있음
+```
+class MyComponent extends Component {
+  render() {
+    const { name, children } = this.props; // 비구조화 할당
+    return (
+      <div>
+        안녕하세요, 제 이름은 {name} 입니다. children 값은 {children}
+      </div>
+    );
+  }
+}
+```
+
+- 클래스형 컴포넌트에서 defaultProps와 propTypes를 설정할 때 class 내부에서 지정하는 방법도 있음
+
+```
+import { Component } from "react";
+import PropTypes from "prop-types";
+
+class MyComponent extends Component {
+  static: defaultProps = {
+    name: "기본 이름",
+  };
+
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+  };
+
+  render() {
+    const { name, children } = this.props; // 비구조화 할당
+    return (
+      <div>
+        안녕하세요, 제 이름은 {name} 입니다. children 값은 {children}
+      </div>
+    );
+  }
+}
+
+export default MyComponent;
+```
 
 ## 3.4 state
 
