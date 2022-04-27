@@ -2125,3 +2125,99 @@ class ErrorBoundary extends Component {
 
 export default ErrorBoundary;
 ```
+
+# 8장 Hooks
+
+## 8.1 useState
+
+```
+# Counter.js
+
+import { useState } from "react";
+
+const Counter = () => {
+  const [value, setValue] = useState(0);
+
+  return (
+    <div>
+      <p>
+        현재 카운터 값은 <b>{value}</b>입니다.
+      </p>
+      <button oonClick={() => setValue(value + 1)}>+1</button>
+      <button oonClick={() => setValue(value - 1)}>-1</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+```
+# App.js
+
+import Counter from "./Counter";
+
+const App = () => {
+  return <Counter />;
+};
+
+export default App;
+```
+
+- useState는 코드 상단에서 import 구문을 통해 불러옴
+- useState 함수의 파라미터에는 상태의 기본값
+- useState 이 함수가 호출되면 배열 반환
+  - 배열의 첫 번째 원소는 상태 값,
+  - 두 번째 원소는 상태를 설정하는 함수
+
+### 8.1.1 useState를 여러 번 사용하기
+
+```
+# Info.js
+
+import { useState } from "react";
+
+const Info = () => {
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
+
+  const onChangeName = (e) => {
+    setName(e.target.value);
+  };
+
+  const onChangeNickname = (e) => {
+    setNickname(e.target.value);
+  };
+
+  return (
+    <div>
+      <div>
+        <input value={name} onChange={onChangeName} />
+        <input value={nickname} onChange={onChangeNickname} />
+      </div>
+      <div>
+        <div>
+          <b>이름 : </b> {name}
+        </div>
+        <div>
+          <b>닉네임 : </b> {nickname}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Info;
+```
+
+```
+# App.js
+
+import Info from "./Info";
+
+const App = () => {
+  return <Info />;
+};
+
+export default App;
+```
