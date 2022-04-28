@@ -2221,3 +2221,19 @@ const App = () => {
 
 export default App;
 ```
+
+## 8.2 useEffect
+
+- useEffect는 리액트 컴포넌트가 렌더링될 때마다 특정 작업을 수행하도록 설정할 수 있는 Hooks
+- 클래스형 컴포넌트의 componentDidMount와 componentDidUpdate를 합친 형태
+
+```
+useEffect(() => {
+  console.log("렌더링이 완료되었습니다!");
+  console.log((name, nickname));
+});
+```
+
+### 8.2.1 마운트될 때만 실행하고 싶을 때
+
+- useEffect에서 설정한 함수를 컴포넌트가 화면에 맨 처음 렌더링될 때만 실행하고, 업데이트될 때는 실행하지 않으려면 함수의 두 번째 파라미터로 비어 있는 배열을 넣어주면 됨
