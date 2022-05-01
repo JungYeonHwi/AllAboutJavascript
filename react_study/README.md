@@ -2738,3 +2738,322 @@ export default Info;
 ## 8.8 다른 Hooks
 
 - 커스텀 Hooks를 만들어서 사용했던 것처럼, 다른 개발자가 만든 Hooks도 라이브러리로 설치하여 사용 가능
+
+# 9장 컴포넌트 스탕일링
+
+## 9.1 가장 흔한 방식, 일반 CSS
+
+- CSS 클래스를 중복되지 않게 만들어야 함
+- CSS 클래스가 중복되는 것을 방지하는 여러 가지 방식 존재
+  - 이름을 지을 때 특별한 규칙을 사용하여 짓는 것
+  - CSS Selector 활용
+
+### 9.1.1 이름 짓는 규칙
+
+- 클래스 이름이 컴포넌트 이름-클래스 형태로 지어져 있음
+- 클래스 이름에 컴포넌트 이름을 포함시킴으로써 다른 컴포넌트에서 실수로 중복되는 클래스를 만들어 사용하는 것을 방지 가능
+- BEM 네이밍 방식 존재 : 이름을 지을 때 일종의 규칙을 준수하여 해당 클래스가 어디에서 어떤 용도로 사용되는지 명확하게 작성하는 방식
+
+### 9.1.2 CSS Selector
+
+- CSS 클래스가 특정 클래스 내부에 있는 경우에만 스타일을 적용 가능
+
+```
+.App .logo {
+  animation : App-logo-spin infinite 20s linear;
+  height : 40vmin;
+}
+```
+
+```
+# App.css
+
+.App {
+  text-align: center;
+}
+
+/* App 안에 들어 있는 .logo */
+.App .logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+/* App안에 들어 있는 header
+header 클래스가 아닌 header 태그 자체에 스타일을 적용하기 때문에 . 생략 */
+.App header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+/* App 안에 들어 있는 a 태그 */
+.App a {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+```
+
+```
+# App.js
+
+import logo from "./logo.svg";
+import "./App.css";
+
+function App() {
+  return (
+    <div className="App">
+      <header>
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+
+## 9.2 Sass 사용하기
+
+- Sass는 CSS 전처리기로 복잡한 작업을 쉽게 할 수 있도록 해 주고, 스타일 코드의 재활용성을 높여 줄 뿐만 아니라 코드의 가독성을 높여서 유지 보수를 더욱 쉽게 해줌
+- Sass에서는 두 가지 확장자 지원
+  - .scss 지원
+  - .sass 지원
+
+```
+# .sass
+
+$font-stack : Helvetica, sans-serif
+$primary-color : #333
+
+body
+    font : 100% $font-stack
+    color : $primary-color
+```
+
+```
+# .scss
+
+$font-stack: Helvetica, sans-serif;
+$primary-color: #333;
+
+body {
+  font: 100% $font-stack;
+  color: $primary-color;
+}
+```
+
+- sass라는 라이브러리를 설치해 주어야 함
+
+```
+npm add sass
+```
+
+```
+# SassComponent.scss
+
+/* 변수 사용하기 */
+$red: #fa5252;
+$orange: #fd7e14;
+$yellow: #fcc419;
+$green: #40c057;
+$blue: #339af0;
+$indigo: #5c7cfa;
+$violet: #7950f2;
+
+/* 믹스인 만들기 (재사용되는 스타일 블록을 함수처럼 사용 할 수 있음) */
+@mixin square($size) {
+  $calculated: 32px * $size;
+  width: $calculated;
+  height: $calculated;
+}
+
+.SassComponent {
+  display: flex;
+  .box {
+    /* 일반 CSS 에선 .SassComponent .box 와 마찬가지 */
+    background: red;
+    cursor: pointer;
+    transition: all 0.3s ease-in;
+    &.red {
+      /* .red 클래스가 .box 와 함께 사용 됐을 때 */
+      background: $red;
+      @include square(1);
+    }
+    &.orange {
+      background: $orange;
+      @include square(2);
+    }
+    &.yellow {
+      background: $yellow;
+      @include square(3);
+    }
+    &.green {
+      background: $green;
+      @include square(4);
+    }
+    &.blue {
+      background: $blue;
+      @include square(5);
+    }
+    &.indigo {
+      background: $indigo;
+      @include square(6);
+    }
+    &.violet {
+      background: $violet;
+      @include square(7);
+    }
+    &:hover {
+      /* .box 에 마우스 올렸을 때 */
+      background: black;
+    }
+  }
+}
+```
+
+```
+# SassComponent.js
+
+import React from "react";
+import "./SassComponent.scss";
+
+const SassComponent = () => {
+  return (
+    <div className="SassComponent">
+      <div className="box red" />
+      <div className="box orange" />
+      <div className="box yellow" />
+      <div className="box green" />
+      <div className="box blue" />
+      <div className="box indigo" />
+      <div className="box violet" />
+    </div>
+  );
+};
+
+export default SassComponent;
+```
+
+```
+# App.js
+
+import { Component } from "react";
+import SassComponent from "./SassComponent";
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <SassComponent />
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+### 9.2.1 utils 함수 분리하기
+
+- 여러 파일에서 사용될 수 있는 Sass 변수 및 믹스인은 다른 파일로 따로 분리하여 작성한 뒤 필요한 곳에서 쉽게 불러와 사용 가능
+
+```
+# src\styles\utils.scss
+
+// 변수 사용하기
+$red: #fa5252;
+$orange: #fd7e14;
+$yellow: #fcc419;
+$green: #40c057;
+$blue: #339af0;
+$indigo: #5c7cfa;
+$violet: #7950f2;
+
+// 믹스인 만들기 (재사용되는 스타일 블록을 함수처럼 사용 할 수 있음)
+@mixin square($size) {
+  $calculated: 32px * $size;
+  width: $calculated;
+  height: $calculated;
+}
+```
+
+- SassComponent.js에서는 utils.scss 파일에서 선언한 변수와 믹스인을 제거하고, 다른 scss 파일을 불러올 때는 @import 구문 사용
+
+```
+# SassComponent.js
+
+@import "./styles/utils.scss";
+
+.SassComponent {
+  display: flex;
+  .box {
+    /* 일반 CSS 에선 .SassComponent .box 와 마찬가지 */
+    background: red;
+    cursor: pointer;
+    transition: all 0.3s ease-in;
+    &.red {
+      /* .red 클래스가 .box 와 함께 사용 됐을 때 */
+      background: $red;
+      @include square(1);
+    }
+    &.orange {
+      background: $orange;
+      @include square(2);
+    }
+    &.yellow {
+      background: $yellow;
+      @include square(3);
+    }
+    &.green {
+      background: $green;
+      @include square(4);
+    }
+    &.blue {
+      background: $blue;
+      @include square(5);
+    }
+    &.indigo {
+      background: $indigo;
+      @include square(6);
+    }
+    &.violet {
+      background: $violet;
+      @include square(7);
+    }
+    &:hover {
+      /* .box 에 마우스 올렸을 때 */
+      background: black;
+    }
+  }
+}
+```
