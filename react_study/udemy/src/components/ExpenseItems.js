@@ -1,12 +1,16 @@
 import './ExpenseItems.css';
 
-function ExpenseItems() {
+function ExpenseItems(props) {
+  const expenseDate = props.date;
+  const expenseTitle = props.title;
+  const ExpenseAmount = props.amount;
+
   return (
     <div className="expense-item">
-      <div>8월 3일 2022</div>
+      <div>{expenseDate.toISOString()}</div>
       <div className="expense-item__description">
-        <h2>Car Insurance</h2>
-        <div className="expense-item_price">10000원</div>
+        <h2>{expenseTitle}</h2>
+        <div className="expense-item_price">${ExpenseAmount}</div>
       </div>
     </div>
   );
