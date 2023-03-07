@@ -12,9 +12,9 @@
 ```
 # contexts/color.js
 
-import { createContext } from "react"
+import { createContext } from "react";
 
-const ColorContext = createContext({color : "black"})
+const ColorContext = createContext({ color: "black" });
 
 export default ColorContext;
 ```
@@ -31,18 +31,21 @@ import ColorContext from "../contexts/color";
 const ColorBox = () => {
   return (
     <ColorContext.Consumer>
-      {value => (
+      {(value) => (
         <div
           style={{
             width: "64px",
             height: "64px",
-            background: value.color
+            background: value.color,
           }}
         />
       )}
     </ColorContext.Consumer>
-  )
-}
+  );
+};
+
+export default ColorBox;
+
 ```
 
 - Constumer 사이에 중괄호를 열어서 그 안에 함수를 넣는 패턴 : Function as a child 혹은 Render Props (컴포넌트의 children이 있어야 할 자리에 일반 JSX 혹은 문자열이 아닌 함수 전달)
@@ -57,8 +60,8 @@ const App = () => {
     <div>
       <ColorBox />
     </div>
-  )
-}
+  );
+};
 
 export default App;
 ```
@@ -71,18 +74,17 @@ export default App;
 # App.js
 
 import ColorBox from "./components/ColorBox";
-import ColorContext from "./contexts/color"
+import ColorContext from "./contexts/color";
 
 const App = () => {
   return (
-    <ColorContext.Provider value={{color : "red"}}>
+    <ColorContext.Provider value={{ color: "red" }}>
       <div>
         <ColorBox />
       </div>
     </ColorContext.Provider>
-
-  )
-}
+  );
+};
 
 export default App;
 ```
@@ -95,14 +97,15 @@ export default App;
 
 ```
 # contexts/color.js
+
 import { createContext, useState } from "react";
 
 const ColorContext = createContext({
   state: { color: "black", subcolor: "red" },
   actions: {
-    setColor: () => { },
-    setSubcolor: () => { }
-  }
+    setColor: () => {},
+    setSubcolor: () => {},
+  },
 });
 
 const ColorProvider = ({ children }) => {
@@ -111,15 +114,15 @@ const ColorProvider = ({ children }) => {
 
   const value = {
     state: { color, subcolor },
-    actions: { setColor, setSubcolor }
+    actions: { setColor, setSubcolor },
   };
   return (
     <ColorContext.Provider value={value}>{children}</ColorContext.Provider>
-  )
-}
+  );
+};
 
 // const ColorConsumer = ColorContext.Consumer와 같은 의미
-const { Consumer  ColorConsumer}  = ColorContext;;
+const { Consumer: ColorConsumer } = ColorContext;
 
 // ColorProvider와 ColorConsumer 내보내기
 export { ColorProvider, ColorConsumer };
@@ -142,8 +145,8 @@ const App = () => {
         <ColorBox />
       </div>
     </ColorProvider>
-  )
-}
+  );
+};
 
 export default App;
 ```
@@ -151,63 +154,28 @@ export default App;
 ```
 # components / ColorBox.js
 
-import ColorConsumer from "../contexts/color";
+import React, { useContext } from "react";
+import ColorContext from "../contexts/color";
 
 const ColorBox = () => {
+  const { state } = useContext(ColorContext);
   return (
-    <ColorConsumer>
-      {value => (
-        <>
-          <div
-            style={{
-              width: "64px",
-              height: "64px",
-              background: value.state.color
-            }}
-          />
-          <div
-            style={{
-              width: "32px",
-              height: "32px",
-              background: value.state.subcolor
-            }}
-          />
-        </>
-      )}
-    </ColorConsumer>
-  );
-};
-
-export default ColorBox;
-
-# 객체 비구조화 할당 문법을 사용하면 value를 조회하는 것을 생략 가능
-
-# components / ColorBox.js
-
-import ColorConsumer from "../contexts/color";
-
-const ColorBox = () => {
-  return (
-    <ColorConsumer>
-      {({ state }) => {
-        <>
-          <div
-            style={{
-              width: "64px",
-              height: "64px",
-              background: state.color
-            }}
-          />
-          <div
-            style={{
-              width: "32px",
-              height: "32px",
-              background: state.subcolor
-            }}
-          />
-        </>
-      }}
-    </ColorConsumer>
+    <>
+      <div
+        style={{
+          width: "64px",
+          height: "64px",
+          background: state.color,
+        }}
+      />
+      <div
+        style={{
+          width: "32px",
+          height: "32px",
+          background: state.subcolor,
+        }}
+      />
+    </>
   );
 };
 
@@ -217,6 +185,7 @@ export default ColorBox;
 ### 15.3.3 색상 선택 컴포넌트 만들기
 
 ```
+
 # components/SelectColors.js
 
 const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
@@ -225,28 +194,29 @@ const SelectColors = () => {
   return (
     <div>
       <h2>색상을 선택하세요.</h2>
-      <div style={{display : : "flex"}}>
-        {colors.map(color => (
+      <div style={{ display: "flex" }}>
+        {colors.map((color) => (
           <div
             key={color}
             style={{
-              background : color,
-              width : "24px",
-              height : "24px",
-              cursor : "pointer"
+              background: color,
+              width: "24px",
+              height: "24px",
+              cursor: "pointer",
             }}
-            />
+          />
         ))}
       </div>
-      <hr/>
+      <hr />
     </div>
-  )
-}
+  );
+};
 
 export default SelectColors;
 ```
 
 ```
+
 # App.js
 
 import ColorBox from "./components/ColorBox";
@@ -261,13 +231,17 @@ const App = () => {
         <ColorBox />
       </div>
     </ColorProvider>
-  )
-}
+  );
+};
+
+export default App;
 ```
 
 ```
+
 # components/SelectColors.js
-import { ColorConsumer } from ",,/contexts/color";
+
+import { ColorConsumer } from "../contexts/color";
 
 const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
@@ -278,25 +252,116 @@ const SelectColors = () => {
       <ColorConsumer>
         {({ actions }) => (
           <div style={{ display: "flex" }}>
-            {colors.map(color => (
+            {colors.map((color) => (
               <div
-                key={color}
-                style={{ background: color, width: "24px", height: "24px", cursor: "pointer" }}
-                onClick={() => actions.setColor(color)}
-                onContextMenu={e => {
-                  e.preventDefault(); // 마우스 오른쪽 버튼 클릭 시 메뉴가 뜨는 것을 무시함
-                  actions.setSubcolor(color);
-                }}
+                    key={color}
+                    style={{
+                        background: color,
+                        width: "24px",
+                        height: "24px",
+                        cursor: "pointer",
+                    }}
+                    onClick={() => actions.setColor(color)}
+                    onContextMenu={e => {
+                        e.preventDefault(); // 마우스 오른쪽 버튼 클릭 시 메뉴가 뜨는 것을 무시함
+                        actions.setSubcolor(color);
+                    }}
               />
             ))}
           </div>
+        )}
       </ColorConsumer>
       <hr />
     </div>
-  )
-}
+  );
+};
 
 export default SelectColors;
 ```
 
 ## 15.4 Consumer 대신 Hook 또는 static contextType 사용하기
+
+### 15.4.1 useContext Hook 사용하기
+
+```
+# components/ColorBox.js
+
+import React, { useContext } from "react";
+import ColorContext from "../contexts/color";
+
+const ColorBox = () => {
+  const { state } = useContext(ColorContext);
+  return (
+    <>
+      <div
+        style={{
+          width: "64px",
+          height: "64px",
+          background: state.color,
+        }}
+      />
+      <div
+        style={{
+          width: "32px",
+          height: "32px",
+          background: state.subcolor,
+        }}
+      />
+    </>
+  );
+};
+
+export default ColorBox;
+```
+
+### 15.4.2 static contextType 사용하기
+
+```
+# components/SelectColor.js
+
+import { Component } from "react";
+import ColorContext from "../contexts/color";
+
+const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
+
+class SelectColors extends Component {
+  static contextType = ColorContext;
+
+  handleSetColor = (color) => {
+    this.context.actions.setColor(color);
+  };
+
+  handleSetcolor = (subcolor) => {
+    this.context.actions.setSubcolor(subcolor);
+  };
+
+  render() {
+    return (
+      <div>
+        <h2>색상을 선택하세요.</h2>
+        <div style={{ display: "flex" }}>
+          {colors.map((color) => (
+            <div
+              key={color}
+              style={{
+                background: color,
+                width: "24px",
+                height: "24px",
+                cursor: "pointer",
+              }}
+              onClick={() => this.handleSetColor(color)}
+              onContextmenu={(e) => {
+                e.preventDefault();
+                this.handleSetSubcolor(color);
+              }}
+            />
+          ))}
+        </div>
+        <hr />
+      </div>
+    );
+  }
+}
+
+export default SelectColors;
+```

@@ -27,7 +27,7 @@ const NewsList = ({ category }) => {
       try {
         const query = category === "all" ? "" : `$category= ${category}`;
         const response = await axios.get(
-          "https://newsapi.org/v2/top-headlines?country=kr&apiKey=16961b223eef40c2bafd38ce915f212d"
+          `https://newsapi.org/v2/top-headlines?country=kr&${query}&apiKey=16961b223eef40c2bafd38ce915f212d`
         );
 
         setArticles(response.data.articles);

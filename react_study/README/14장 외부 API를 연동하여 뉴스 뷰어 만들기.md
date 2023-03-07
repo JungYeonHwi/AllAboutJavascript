@@ -668,7 +668,7 @@ const NewsList = ({ category }) => {
       try {
         const query = category === "all" ? "" : `$category= ${category}`;
         const response = await axios.get(
-          "https://newsapi.org/v2/top-headlines?country=kr&apiKey=16961b223eef40c2bafd38ce915f212d"
+          `https://newsapi.org/v2/top-headlines?country=kr&${query}&apiKey=16961b223eef40c2bafd38ce915f212d`
         );
 
         setArticles(response.data.articles);
@@ -704,7 +704,256 @@ export default NewsList;
 ## 14.7 리액트 라우터 적용하기
 
 ### 14.7.1 리액트 라우터의 설치 및 적용
+
+```
+# index.js
+
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+
+```
+
 ### 14.7.2 NewsPage 생성
+
+```
+# pages/NewsPage.js
+
+import Categories from "../components/Categories";
+import NewsList from "../components/NewsList";
+
+const NewsPage = ({ match }) => {
+  // 카테고리가 선택되지 않았으면 기본값 all로 사용
+  const category = match.params.category || "all";
+
+  return (
+    <>
+      <Categories />
+      <NewsList category={category} />
+    </>
+  );
+};
+
+export default NewsPage;
+```
+
+```
+# App.js
+
+import { Route } from "react-router-dom";
+import NewsPage from "./pages/NewsPage";
+
+const App = () => {
+  return <Route path="/:category?" component={NewsPage} />;
+};
+
+export default App;
+```
+
+- path에 /:category?와 같은 형태로 맨 뒤에 물음표가 있으면 선택적이라는 의미 (있을 수도 있고 없을 수도 있음)
+- category URL 파라미터가 없다면 전체 카테고리를 선택한 것으로 간주
+
 ### 14.7.3 Categories에서 NavLink 사용하기
 
+```
+# components/Categories.js
+import styled, { css } from "styled-components";
+import { NavLink } from "react-router-dom";
+
+const categories = [
+  {
+    name: "all",
+    text: "전체보기",
+  },
+  {
+    name: "business",
+    text: "비즈니스",
+  },
+  {
+    name: "entertainment",
+    text: "엔터테인먼트",
+  },
+  {
+    name: "health",
+    text: "건강",
+  },
+  {
+    name: "science",
+    text: "과학",
+  },
+  {
+    name: "sports",
+    text: "스포츠",
+  },
+  {
+    name: "technology",
+    text: "기술",
+  },
+];
+
+const CategoriesBlock = styled.div`
+  display: flex;
+  padding: 1rem;
+  width: 768px;
+  margin: 0 auto;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    overflow-x: auto;
+  }
+`;
+
+const Category = styled(NavLink)`
+  font-size: 1.125rem;
+  cursor: pointer;
+  white-space: pre;
+  text-decoration: none;
+  color: inherit;
+  padding-bottom: 0.25rem;
+
+  &:hover {
+    color: #495057;
+  }
+
+  &.active {
+    font-weight: 600;
+    border-bottom: 2px solid #22b8cf;
+    color: #22b8cf;
+    &:hover {
+      color: #3bc9db;
+    }
+  }
+
+  ${(props) =>
+    props.active &&
+    css`
+      font-weight: 600;
+      border-bottom: 2px solid #22b8cf;
+      color: #22b8cf;
+      &:hover {
+        color: #3bc9db;
+      }
+    `}
+
+  & + & {
+    margin-left: 1rem;
+  }
+`;
+
+const Categories = ({ onSelect, category }) => {
+  return (
+    <CategoriesBlock>
+      {categories.map((c) => (
+        <Category
+          key={c.name}
+          active={category === c.name}
+          exact={c.name === "all"}
+          to={c.name === "all" ? "/" : `/${c.name}`}
+        >
+          {c.text}
+        </Category>
+      ))}
+    </CategoriesBlock>
+  );
+};
+
+export default Categories;
+```
+
 ## 14.8 usePromise 커스텀 Hook 만들기
+
+```
+# lib/usePromise.js
+
+import { useState, useEffect } from "react";
+
+export default function usePromise(promiseCreator, deps) {
+  // 대기 중/완료/실패에 대한 상태 관리
+  const [loading, setLoading] = useState(false);
+  const [resolved, setResolved] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const process = async () => {
+      setLoading(true);
+      try {
+        const resolved = await promiseCreator();
+        setResolved(resolved);
+      } catch (e) {
+        setError(e);
+      }
+      setLoading(false);
+    };
+    process();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  return [loading, resolved, error];
+}
+```
+
+- usePromsie Hook은 Promise의 대기 중, 완료 결과, 실패 결과에 대한 상태를 관리, usePromise의 의존 배열 deps를 파라미터로 받아 옴
+- 파라미터로 받아 온 deps 배열은 usePromise 내부에서 사용한 useEffect의 의존 배열로 설정됨 -> ESLint 결고가 나타남
+
+```
+# component/NewsList.js
+
+import styled from "styled-components";
+import NewsItem from "./NewsItem";
+import axios from "axios";
+import usePromise from "../lib/usePromise";
+
+const NewsListBlock = styled.div`
+  box-sizing: border-box;
+  padding-bottom: 2em;
+  width: 768px;
+  margin: 0 auto;
+  margin-top: 2rem;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+`;
+
+const NewsList = ({ category }) => {
+  const [loading, response, error] = usePromise(() => {
+    const query = category === "all" ? "" : `&category=${category}`;
+    return axios.get(
+      `https://newsapi.org/v2/top-headlines?country=kr&${query}&apiKey=16961b223eef40c2bafd38ce915f212d`
+    );
+  }, [category]);
+
+  // 대기 중일 때
+  if (loading) {
+    return <NewsListBlock>대기 중...</NewsListBlock>;
+  }
+  // 아직 response 값이 설정되지 않았을 때
+  if (!response) {
+    return null;
+  }
+  // 에러가 발생했을 때
+  if (error) {
+    return <NewsListBlock>에러 발생!</NewsListBlock>;
+  }
+
+  // response 값이 유효할 때
+  const { articles } = response.data;
+  return (
+    <NewsListBlock>
+      {articles.map((article) => (
+        <NewsItem key={article.url} article={article} />
+      ))}
+    </NewsListBlock>
+  );
+};
+
+export default NewsList;
+```
