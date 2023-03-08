@@ -4,6 +4,7 @@
 [# CAHPTER 1 타입](#cahpter-1-타입)
 [# CHAPTER 2 값](#chapter-2-값)
 [# CHAPTER 3 네이티브](#chapter-3-네이티브)
+[# CHPATER 4 강제변환](#cahpter-4-강제변환)
 
 # CAHPTER 1 타입
 
@@ -507,3 +508,5 @@ c.length; // 3
 
 - 내장 네티이브 생성자는 각자의 .prototype 객체를 가짐 (해당 객체의 하위 타입별로 고유한 로직이 담겨 있음)
 - .prototype들은 이미 생성되어 내장된 상태이므로 단 한 번만 생성됨
+
+# CAHPTER 4 강제변환
